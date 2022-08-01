@@ -12,8 +12,6 @@ import (
 )
 
 func IdenticalAnalysis (bytecodes map[string]string, checkProxy bool) (map[string]string, int, []int, int) {
-    log.Println("Identical clustering")
-
     clustersNumber := 0
     var clustersSize []int
     emptyFiles := 0
@@ -45,8 +43,6 @@ func IdenticalAnalysis (bytecodes map[string]string, checkProxy bool) (map[strin
 }
 
 func DisassembledWithoutArgumentsAnalysis (bytecodes map[string]string) (map[string]string, int, []int, int) {
-    log.Println("Disassembled without arguments clustering")
-
     // Process Opcodes
     processedOpcodes := make(map[string]string)
     for address, bytecode := range bytecodes {

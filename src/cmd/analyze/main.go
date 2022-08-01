@@ -26,10 +26,12 @@ func main() {
     log.Println("Total files detected:", totalAddresses)
     bytecodes := utils.ReadFiles(bytecodeFilePaths)
 
+    log.Println("Identical clustering")
     withoutEmpty, emptyFiles, clustersSize, clustersNumber := analysis.IdenticalAnalysis(bytecodes, true)
     analysis.PrintResults(totalAddresses, emptyFiles, clustersSize, clustersNumber)
     fmt.Println()
 
+    log.Println("Disassembled without arguments clustering")
     _, _, opcodesClustersSize, opcodesClustersNumber := analysis.DisassembledWithoutArgumentsAnalysis(withoutEmpty)
     analysis.PrintResults(totalAddresses, emptyFiles, opcodesClustersSize, opcodesClustersNumber)
 }
