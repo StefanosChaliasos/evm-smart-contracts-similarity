@@ -15,6 +15,7 @@ func main() {
 	var args struct {
         Path         string `arg:"positional,required" help:"Path to directory containing bytecodes"` 
         Debug        bool   `help:"Print debug information"` 
+        SkipProxy    bool   `help:"Skip potential proxy contracts"` 
         Ngram        int    `help:"Select how many elements should an n-gram have" default:"5"` 
         Threshold    int    `help:"Set a similarity threshold" default:"90"` 
 	}
@@ -37,9 +38,9 @@ func main() {
     bytecodes := utils.ReadFiles(bytecodeFilePaths)
 
     log.Println("Identical clustering")
-    withoutEmpty, emptyFiles, clustersSize, clustersNumber := analysis.IdenticalAnalysis(bytecodes, true)
+    withoutEmpty, emptyFiles, clustersSize, clustersNumber := analysis.IdenticalAnalysis(bytecodes, true, args.SkipProxy)
     if emptyFiles > 0 {
-        log.Warn("Total empty files detected:", emptyFiles)
+        log.Warn("Total empty files (and proxy files if --skipproxy is enabled) detected: ", emptyFiles)
     }
     totalAddresses = totalAddresses - emptyFiles
     analysis.PrintResults(totalAddresses, clustersSize, clustersNumber)
