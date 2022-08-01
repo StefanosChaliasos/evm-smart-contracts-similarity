@@ -3,13 +3,13 @@ package main
 import (
     "fmt"
 
+    //"github.com/ethereum/go-ethereum/core/asm"
 	arg "github.com/alexflint/go-arg"
     log "github.com/sirupsen/logrus"
 
     "github.com/StefanosChaliasos/evm-smart-contracts-similarity/src/utils"
     "github.com/StefanosChaliasos/evm-smart-contracts-similarity/src/analysis"
 )
-
 
 func main() {
 	var args struct {

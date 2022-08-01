@@ -1,10 +1,6 @@
 package analysis
 
 import (
-    "strings"
-    "encoding/hex"
-
-    "github.com/ethereum/go-ethereum/core/asm"
     log "github.com/sirupsen/logrus"
     "github.com/adrg/strutil"
     "github.com/adrg/strutil/metrics"
@@ -59,17 +55,9 @@ func IdenticalAnalysis (bytecodes map[string]string, checkProxy bool) (map[strin
 func DisassembledWithoutArgumentsAnalysis (bytecodes map[string]string) (map[string]string, []int, int) {
     // Process Opcodes
     processedOpcodes := make(map[string]string)
-    for address, bytecode := range bytecodes {
-        script, scriptErr := hex.DecodeString(bytecode)
-        if scriptErr != nil {
-            log.Panic(scriptErr)
-        }
-        dis, disErr := asm.Disassemble(script)
-        if disErr != nil {
-            log.Panic(disErr)
-        }
-        processed := strings.Join(utils.RemovePushValues(dis), " ")
-        processedOpcodes[address] = processed
+    for address, bytecodeString := range bytecodes {
+        addressOpcodes := utils.DissasembleWithoutPushValues(address, bytecodeString)
+        processedOpcodes[address] = addressOpcodes
     }
 
     clusters := utils.FindIdentical(processedOpcodes) 
@@ -86,7 +74,7 @@ func SimilarityAnalysis (opcodes map[string]string) ([]int, int) {
 
     for address, addressOpcodes := range opcodes {
         hasSimilar := false
-        for clusterOpcodes, _ := range clusters {
+        for clusterOpcodes := range clusters {
             similarity := strutil.Similarity(addressOpcodes, clusterOpcodes, j) 
             if similarity > 0.90 {
                 clusters[clusterOpcodes] = append(clusters[clusterOpcodes], address)
