@@ -15,7 +15,8 @@ func main() {
 	var args struct {
         Path         string `arg:"positional,required" help:"Path to directory containing bytecodes"` 
         Debug        bool   `help:"Print debug information"` 
-		Threads      int64  `default:"16"`
+        Ngram        int    `help:"Select how many elements should an n-gram have" default:"5"` 
+        Threshold    int    `help:"Set a similarity threshold" default:"90"` 
 	}
 
 	arg.MustParse(&args)
@@ -49,7 +50,9 @@ func main() {
     analysis.PrintResults(totalAddresses, opcodesClustersSize, opcodesClustersNumber)
     fmt.Println()
 
-    log.Printf("Jaccard similarity with %d-gram and %d%% threshold\n", 5, 90)
-    similarityClustersSize, similarityClustersNumber := analysis.SimilarityAnalysis(processedOpcodes)
+    log.Printf("Jaccard similarity with %d-gram and %d%% threshold\n", args.Ngram, args.Threshold)
+    similarityClustersSize, similarityClustersNumber := analysis.SimilarityAnalysis(processedOpcodes, args.Ngram, args.Threshold)
     analysis.PrintResults(totalAddresses, similarityClustersSize, similarityClustersNumber)
+
+    log.Println("Finish")
 }

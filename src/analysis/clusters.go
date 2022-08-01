@@ -65,18 +65,18 @@ func DisassembledWithoutArgumentsAnalysis (bytecodes map[string]string) (map[str
     return processedOpcodes, clustersSize, clustersNumber
 }
 
-func SimilarityAnalysis (opcodes map[string]string) ([]int, int) {
+func SimilarityAnalysis (opcodes map[string]string, ngram int, threshold int) ([]int, int) {
     clusters := make(map[string][]string)
 
     j := metrics.NewJaccard()
     j.CaseSensitive = false
-    j.NgramSize = 5
+    j.NgramSize = ngram
 
     for address, addressOpcodes := range opcodes {
         hasSimilar := false
         for clusterOpcodes := range clusters {
             similarity := strutil.Similarity(addressOpcodes, clusterOpcodes, j) 
-            if similarity > 0.90 {
+            if similarity > float64(threshold) * 0.01 {
                 clusters[clusterOpcodes] = append(clusters[clusterOpcodes], address)
                 hasSimilar = true
                 break
