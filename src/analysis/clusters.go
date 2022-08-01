@@ -21,10 +21,11 @@ func analyseClusters (clusters map[string][]string) ([]int, int) {
     return clustersSize, clustersNumber
 }
 
-func IdenticalAnalysis (bytecodes map[string]string, checkProxy bool, skipProxy bool) (map[string]string, int, []int, int) {
+func IdenticalAnalysis (bytecodes map[string]string, skipProxy bool) (map[string]string, int, []int, int, int) {
     clustersNumber := 0
     var clustersSize []int
     emptyFiles := 0
+    potentialProxies := 0
 
     clusters := utils.FindIdentical(bytecodes) 
 
@@ -36,9 +37,10 @@ func IdenticalAnalysis (bytecodes map[string]string, checkProxy bool, skipProxy 
             emptyFiles = len(addresses)
             continue
         }
-        if checkProxy && len(bytecode) <= 100 {
+        if len(bytecode) <= 100 {
             log.Warn("Potentially proxy contracts:", addresses)
             if skipProxy {
+                potentialProxies += len(addresses)
                 continue 
             }
         }
@@ -52,7 +54,7 @@ func IdenticalAnalysis (bytecodes map[string]string, checkProxy bool, skipProxy 
             log.Debug("Cluster items:", addresses)
         }
     }
-    return withoutEmpty, emptyFiles, clustersSize, clustersNumber
+    return withoutEmpty, emptyFiles, clustersSize, clustersNumber, potentialProxies
 }
 
 func DisassembledWithoutArgumentsAnalysis (bytecodes map[string]string) (map[string]string, []int, int) {

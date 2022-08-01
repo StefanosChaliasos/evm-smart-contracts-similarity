@@ -37,12 +37,16 @@ func main() {
     log.Println("Total files detected:", totalAddresses)
     bytecodes := utils.ReadFiles(bytecodeFilePaths)
 
-    log.Println("Identical clustering")
-    withoutEmpty, emptyFiles, clustersSize, clustersNumber := analysis.IdenticalAnalysis(bytecodes, true, args.SkipProxy)
+    log.Println("Pre-processing")
+    withoutEmpty, emptyFiles, clustersSize, clustersNumber, potentialProxies := analysis.IdenticalAnalysis(bytecodes, args.SkipProxy)
     if emptyFiles > 0 {
-        log.Warn("Total empty files (and proxy files if --skipproxy is enabled) detected: ", emptyFiles)
+        log.Warn("Total empty files detected: ", emptyFiles)
     }
-    totalAddresses = totalAddresses - emptyFiles
+    if args.SkipProxy && potentialProxies > 0 {
+        log.Warn("Total potential proxy files detected: ", potentialProxies)
+    }
+    totalAddresses = totalAddresses - emptyFiles -potentialProxies
+    log.Println("Identical clustering")
     analysis.PrintResults(totalAddresses, clustersSize, clustersNumber)
     fmt.Println()
 
