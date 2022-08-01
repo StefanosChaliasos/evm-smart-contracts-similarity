@@ -21,13 +21,14 @@ func analyseClusters (clusters map[string][]string) ([]int, int) {
     return clustersSize, clustersNumber
 }
 
-func IdenticalAnalysis (bytecodes map[string]string, skipProxy bool) (map[string]string, int, []int, int, int) {
+func IdenticalAnalysis (bytecodes map[string]string, skipProxy bool) (map[string][]string, map[string]string, int, []int, int, int) {
     clustersNumber := 0
     var clustersSize []int
     emptyFiles := 0
     potentialProxies := 0
 
     clusters := utils.FindIdentical(bytecodes) 
+    finalClusters := make(map[string][]string)
 
     withoutEmpty := make(map[string]string)
 
@@ -45,6 +46,7 @@ func IdenticalAnalysis (bytecodes map[string]string, skipProxy bool) (map[string
             }
         }
         // filter out empty strings
+        finalClusters[bytecode] = addresses
         for _, address := range addresses {
             withoutEmpty[address] = bytecode
         }
@@ -54,10 +56,10 @@ func IdenticalAnalysis (bytecodes map[string]string, skipProxy bool) (map[string
             log.Debug("Cluster items:", addresses)
         }
     }
-    return withoutEmpty, emptyFiles, clustersSize, clustersNumber, potentialProxies
+    return finalClusters, withoutEmpty, emptyFiles, clustersSize, clustersNumber, potentialProxies
 }
 
-func DisassembledWithoutArgumentsAnalysis (bytecodes map[string]string) (map[string]string, []int, int) {
+func DisassembledWithoutArgumentsAnalysis (bytecodes map[string]string) (map[string][]string, map[string]string, []int, int) {
     // Process Opcodes
     processedOpcodes := make(map[string]string)
     for address, bytecodeString := range bytecodes {
@@ -67,10 +69,10 @@ func DisassembledWithoutArgumentsAnalysis (bytecodes map[string]string) (map[str
 
     clusters := utils.FindIdentical(processedOpcodes) 
     clustersSize, clustersNumber := analyseClusters(clusters)
-    return processedOpcodes, clustersSize, clustersNumber
+    return clusters, processedOpcodes, clustersSize, clustersNumber
 }
 
-func SimilarityAnalysis (opcodes map[string]string, ngram int, threshold int) ([]int, int) {
+func SimilarityAnalysis (opcodes map[string]string, ngram int, threshold int) (map[string][]string, []int, int) {
     clusters := make(map[string][]string)
 
     j := metrics.NewJaccard()
@@ -93,5 +95,5 @@ func SimilarityAnalysis (opcodes map[string]string, ngram int, threshold int) ([
     }
 
     clustersSize, clustersNumber := analyseClusters(clusters)
-    return clustersSize, clustersNumber
+    return clusters, clustersSize, clustersNumber
 }

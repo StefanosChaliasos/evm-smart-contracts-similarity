@@ -41,3 +41,13 @@ func ReadFiles(files []string) map[string]string {
     }
     return res
 }
+
+func WriteFile(filepath string, output string) {
+    file, err := os.Create(filepath)
+	if err != nil {
+		log.Panic(err)
+	} else {
+		file.WriteString(output)
+	}
+	file.Close()
+}
