@@ -20,10 +20,10 @@ func main() {
 
 	arg.MustParse(&args)
 
-    log.SetFormatter(&utils.MyFormatter{log.TextFormatter{
+    log.SetFormatter(&log.TextFormatter{
         TimestampFormat : "2006-01-02 15:04:05",
         FullTimestamp: true,
-    }})
+    })
 
     if args.Debug {
         log.SetLevel(log.DebugLevel)
