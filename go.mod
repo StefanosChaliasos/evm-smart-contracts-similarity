@@ -3,6 +3,7 @@ module github.com/StefanosChaliasos/evm-smart-contracts-similarity
 go 1.17
 
 require (
+	github.com/adrg/strutil v0.3.0
 	github.com/alexflint/go-arg v1.4.3
 	github.com/ethereum/go-ethereum v1.10.21
 	github.com/sirupsen/logrus v1.9.0

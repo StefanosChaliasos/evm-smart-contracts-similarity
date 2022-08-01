@@ -37,10 +37,19 @@ func main() {
 
     log.Println("Identical clustering")
     withoutEmpty, emptyFiles, clustersSize, clustersNumber := analysis.IdenticalAnalysis(bytecodes, true)
-    analysis.PrintResults(totalAddresses, emptyFiles, clustersSize, clustersNumber)
+    if emptyFiles > 0 {
+        log.Warn("Total empty files detected:", emptyFiles)
+    }
+    totalAddresses = totalAddresses - emptyFiles
+    analysis.PrintResults(totalAddresses, clustersSize, clustersNumber)
     fmt.Println()
 
     log.Println("Disassembled without arguments clustering")
-    _, _, opcodesClustersSize, opcodesClustersNumber := analysis.DisassembledWithoutArgumentsAnalysis(withoutEmpty)
-    analysis.PrintResults(totalAddresses, emptyFiles, opcodesClustersSize, opcodesClustersNumber)
+    processedOpcodes, opcodesClustersSize, opcodesClustersNumber := analysis.DisassembledWithoutArgumentsAnalysis(withoutEmpty)
+    analysis.PrintResults(totalAddresses, opcodesClustersSize, opcodesClustersNumber)
+    fmt.Println()
+
+    log.Printf("Jaccard similarity with %d-gram and %d%% threshold\n", 5, 90)
+    similarityClustersSize, similarityClustersNumber := analysis.SimilarityAnalysis(processedOpcodes)
+    analysis.PrintResults(totalAddresses, similarityClustersSize, similarityClustersNumber)
 }
