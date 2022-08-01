@@ -1,8 +1,9 @@
 package utils
 
 import (
-    "log"
     "strings"
+
+    log "github.com/sirupsen/logrus"
 )
 
 func RemovePushValues(dissasembled []string) []string {
@@ -11,11 +12,11 @@ func RemovePushValues(dissasembled []string) []string {
         line = strings.TrimSpace(line)
         fields := strings.Fields(line)
         if len(fields) > 3 {
-            log.Println("Fields should not be > 3")    
+            log.Panic("Fields should not be > 3")    
         }
         if len(fields) == 3 {
             if ! strings.HasPrefix(fields[1], "PUSH") {
-                log.Println("OPCODE should be PUSH when len is 3")    
+                log.Panic("OPCODE should be PUSH when len is 3")    
             } 
         }
         res = append(res, fields[1])

@@ -1,24 +1,33 @@
 package main
 
 import (
-    "log"
     "fmt"
-    _ "path/filepath"
-	_ "os"
 
 	arg "github.com/alexflint/go-arg"
+    log "github.com/sirupsen/logrus"
 
     "github.com/StefanosChaliasos/evm-smart-contracts-similarity/src/utils"
     "github.com/StefanosChaliasos/evm-smart-contracts-similarity/src/analysis"
 )
 
+
 func main() {
 	var args struct {
         Path         string `arg:"positional,required" help:"Path to directory containing bytecodes"` 
+        Debug        bool   `help:"Print debug information"` 
 		Threads      int64  `default:"16"`
 	}
 
 	arg.MustParse(&args)
+
+    log.SetFormatter(&utils.MyFormatter{log.TextFormatter{
+        TimestampFormat : "2006-01-02 15:04:05",
+        FullTimestamp: true,
+    }})
+
+    if args.Debug {
+        log.SetLevel(log.DebugLevel)
+    }
 
     log.Println("Read files from:", args.Path)
     bytecodeFilePaths := utils.WalkDirectoryForFiles(args.Path, ".bin")

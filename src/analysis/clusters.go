@@ -1,12 +1,11 @@
 package analysis
 
 import (
-    "log"
-    "fmt"
     "strings"
     "encoding/hex"
 
     "github.com/ethereum/go-ethereum/core/asm"
+    log "github.com/sirupsen/logrus"
 
     "github.com/StefanosChaliasos/evm-smart-contracts-similarity/src/utils"
 )
@@ -22,7 +21,7 @@ func IdenticalAnalysis (bytecodes map[string]string, checkProxy bool) (map[strin
 
     for bytecode, addresses := range clusters {
         if bytecode == "" {
-            fmt.Println("Addresses with empty values:", addresses)
+            log.Debug("Addresses with empty values:", addresses)
             emptyFiles = len(addresses)
             continue
         }
@@ -31,12 +30,12 @@ func IdenticalAnalysis (bytecodes map[string]string, checkProxy bool) (map[strin
             withoutEmpty[address] = bytecode
         }
         if checkProxy && len(bytecode) <= 100 {
-            fmt.Println("Potentially proxy contracts:", addresses)
+            log.Debug("Potentially proxy contracts:", addresses)
         }
         if len(addresses) > 1 {
             clustersNumber += 1
             clustersSize = append(clustersSize, len(addresses))
-            fmt.Println("Cluster items:", addresses)
+            log.Debug("Cluster items:", addresses)
         }
     }
     return withoutEmpty, emptyFiles, clustersSize, clustersNumber
@@ -48,11 +47,11 @@ func DisassembledWithoutArgumentsAnalysis (bytecodes map[string]string) (map[str
     for address, bytecode := range bytecodes {
         script, scriptErr := hex.DecodeString(bytecode)
         if scriptErr != nil {
-            log.Println(scriptErr)
+            log.Panic(scriptErr)
         }
         dis, disErr := asm.Disassemble(script)
         if disErr != nil {
-            log.Println(disErr)
+            log.Panic(disErr)
         }
         processed := strings.Join(utils.RemovePushValues(dis), " ")
         processedOpcodes[address] = processed

@@ -3,9 +3,10 @@ package utils
 import (
 	"path/filepath"
 	"os"
-    "log"
     "strings"
     "io/ioutil"
+
+    log "github.com/sirupsen/logrus"
 )
 
 func WalkDirectoryForFiles(directory string, extension string) []string {
@@ -21,7 +22,7 @@ func WalkDirectoryForFiles(directory string, extension string) []string {
         return nil
     })
     if err != nil {
-        log.Println(err)
+        log.Panic(err)
     }
     return res
 }
@@ -31,7 +32,7 @@ func ReadFiles(files []string) map[string]string {
     for _, file := range files {
         fileBuf, err := ioutil.ReadFile(file)
         if err != nil {
-            log.Println(err)
+            log.Panic(err)
         }
         fileContents := string(fileBuf)
         basename := filepath.Base(file)
